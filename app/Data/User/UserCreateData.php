@@ -3,15 +3,20 @@
 namespace App\Data\User;
 
 use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\Validation\Max;
+use Spatie\LaravelData\Attributes\Validation\Min;
+use Spatie\LaravelData\Attributes\Validation\Required;
+use Spatie\LaravelData\Attributes\Validation\StringType;
+use Spatie\LaravelData\Attributes\Validation\Unique;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
 class UserCreateData extends Data
 {
-    public $email;
-    public $name;
-    public $password;
-    public $emailVerifiedAt;
+    public string $email;
+    public string $name;
+    public string $password;
+    public Carbon|Optional|null $emailVerifiedAt;
 
     public function __construct(
         string $email,
@@ -23,5 +28,39 @@ class UserCreateData extends Data
         $this->password = $password;
         $this->name = $name;
         $this->email = $email;
+    }
+
+    public static function rules(...$args): array
+    {
+        return [
+            'name' => [
+                new Unique(
+                    table: 'users',
+                    column: 'name',
+                ),
+                new Required(),
+                new StringType(),
+                new Max(100)
+            ],
+            'email' => [
+                new Unique(
+                    table: 'users',
+                    column: 'email',
+                ),
+                new Required(),
+                new StringType(),
+                new Max(100)
+            ],
+            'password' => [
+                new Unique(
+                    table: 'users',
+                    column: 'email',
+                ),
+                new Required(),
+                new StringType(),
+                new Max(100),
+                new Min(8),
+            ]
+        ];
     }
 }
