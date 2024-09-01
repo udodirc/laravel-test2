@@ -22,3 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResources([
     'users'=>UserController::class
 ]);
+
+Route::post('/user/import', [UserController::class, 'import']);
