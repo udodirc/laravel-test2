@@ -22,6 +22,6 @@ class UserController extends Controller
 
     public function import()
     {
-        $result = $this->userService->import();
+        return $this->userService->import();
     }
 }

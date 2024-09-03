@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Data\User\UserCreateData;
 use App\Http\Repositories\UserRepository;
-use App\Http\Services\FileService;
+use App\Jobs\SendUserNotification;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +21,7 @@ class UserService
         return $this->userRepository->create($data);
     }
 
-    public static function formUserLst(array $users): array
+    public static function formUserList(array $users): array
     {
         $userList = [];
         foreach ($users as $user) {
@@ -46,7 +46,7 @@ class UserService
 
             if (!empty($users)) {
                 array_shift($users);
-                $userList = self::formUserLst($users);
+                $userList = self::formUserList($users);
             }
         }
 
@@ -56,12 +56,20 @@ class UserService
     public function import(): bool
     {
         $result = false;
-        $userList = self::getUsersFromCSV();
+        $users = self::getUsersFromCSV();
 
-        if (!empty($userList)) {
-            $result = User::insert($userList);
+        if (!empty($users)) {
+            $result = User::insert($users);
+            self::sendBatchEmails($users);
         }
 
         return $result;
+    }
+
+    public function sendBatchEmails($users)
+    {
+        foreach ($users as $user) {
+            SendUserNotification::dispatch($user);
+        }
     }
 }
