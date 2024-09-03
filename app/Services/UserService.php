@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Data\User\UserCreateData;
 use App\Http\Repositories\UserRepository;
+use App\Jobs\SendUserMessage;
 use App\Jobs\SendUserNotification;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserService
 {
@@ -21,7 +23,13 @@ class UserService
         return $this->userRepository->create($data);
     }
 
-    public static function formUserList(array $users): array
+    public function sendUserMessage(int $role, string $message): void
+    {
+        $users = $this->userRepository->users($role);
+        self::sendMessage($users, $message);
+    }
+
+    private static function formUserList(array $users): array
     {
         $userList = [];
         foreach ($users as $user) {
@@ -35,7 +43,7 @@ class UserService
         return $userList;
     }
 
-    public static function getUsersFromCSV(): array
+    private static function getUsersFromCSV(): array
     {
         $userList = [];
         $filePath = 'public/users/import.csv';
@@ -66,10 +74,17 @@ class UserService
         return $result;
     }
 
-    public function sendBatchEmails($users)
+    private function sendBatchEmails(array $users)
     {
         foreach ($users as $user) {
             SendUserNotification::dispatch($user);
+        }
+    }
+
+    private function sendMessage(Collection $users, string $message)
+    {
+        foreach ($users as $user) {
+            SendUserMessage::dispatch($user, $message);
         }
     }
 }

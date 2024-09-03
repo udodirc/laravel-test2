@@ -4,11 +4,15 @@ namespace App\Http\Repositories;
 
 use App\Data\User\UserCreateData;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
 use Spatie\LaravelData\Optional;
 
 class UserRepository
 {
+    const ADMIN_ROLE = 1;
+    const USER_ROLE = 0;
+
     public function create(UserCreateData $data): User
     {
         $user = new User();
@@ -23,5 +27,10 @@ class UserRepository
         $user->save();
 
         return $user;
+    }
+
+    public function users(int $role): Collection
+    {
+        return User::all()->where('admin', $role);
     }
 }
