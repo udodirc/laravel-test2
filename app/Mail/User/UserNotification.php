@@ -32,6 +32,7 @@ class UserNotification extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mail.user.register');
+        return $this->markdown('mail.user.register')
+            ->subject('Registration');
     }
 }

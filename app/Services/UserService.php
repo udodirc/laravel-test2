@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Data\User\UserCreateData;
+use App\Events\UserRegisteredNotification;
 use App\Http\Repositories\UserRepository;
 use App\Jobs\SendUserMessage;
 use App\Jobs\SendUserNotification;
@@ -77,7 +78,7 @@ class UserService
     private function sendBatchEmails(array $users)
     {
         foreach ($users as $user) {
-            SendUserNotification::dispatch($user);
+            event(new UserRegisteredNotification($user));
         }
     }
 

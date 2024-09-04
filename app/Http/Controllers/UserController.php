@@ -20,7 +20,7 @@ class UserController extends Controller
         );
     }
 
-    public function import()
+    public function import(): bool
     {
         return $this->userService->import();
     }
