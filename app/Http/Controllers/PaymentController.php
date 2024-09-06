@@ -9,7 +9,7 @@ class PaymentController extends Controller
     /**
      * @throws \Exception
      */
-    public function payment(PaymentService $paymentService)
+    public function payment(PaymentService $paymentService): void
     {
         $payPal = $paymentService->setPaymentService('PayPal');
         $stripe = $paymentService->setPaymentService('Stripe');
