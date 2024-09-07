@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,3 +27,4 @@ Route::apiResources([
 
 Route::post('/user/import', [UserController::class, 'import']);
 Route::post('/payment', [PaymentController::class, 'payment']);
+Route::post('/upload', [UploadController::class, 'upload']);
