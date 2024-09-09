@@ -52,6 +52,24 @@ services:
       - laravel
     restart: always
 
+  db-test:
+      container_name: laravel-db-test
+      image: mysql:latest
+      environment:
+          MYSQL_USER: ${DB_USERNAME}
+          MYSQL_PASSWORD: ${DB_PASSWORD}
+          MYSQL_DATABASE: ${DB_DATABASE}
+          MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      command: [
+          "--log_bin_trust_function_creators=1",
+          "--sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+      ]
+      ports:
+          - "${DOCKER_PROJECT_IP}:${DOCKER_DB_PORT_TEST}:3306"
+      networks:
+          - laravel
+      restart: always
+
 networks:
   laravel:
     driver: bridge
